@@ -1,0 +1,223 @@
+// 2.cpp: определяет точку входа для консольного приложения.
+//
+
+#include "stdafx.h"
+#include "iostream"
+#include "fstream"
+#include "string.h"
+#include "stdlib.h"
+#include "iomanip"
+
+using namespace std;
+
+struct Cklad
+{
+	char Name_of_product[20];
+	int kolichestvo;
+	int stoimost;
+	int prosent_nadbavka;
+	Cklad *Next;
+};
+
+class List
+{
+	Cklad *Head;
+public:
+	List() :Head(NULL) {};
+	~List();
+	void ReadFromFile();
+	void Add();
+	void Show();
+	void LoadToFile();
+	void Delete();
+	void Search();
+	void Sort();
+};
+List::~List()
+{
+	while (Head != NULL)
+	{
+		Cklad *temp = Head->Next;
+		delete Head;
+		Head = temp;
+	}
+}
+void List::ReadFromFile()
+{
+	ifstream fin("1.txt");
+	Cklad *temp;
+	if (fin.is_open())
+	{
+		cout << "File is open" << endl;
+		while (!fin.eof())
+		{
+			temp = new Cklad;
+			fin >> temp->Name_of_product >> temp->kolichestvo >> temp->stoimost >> temp->prosent_nadbavka;
+			temp->Next = Head;
+			Head = temp;
+		}
+		cout << "Data is recevied" << endl;
+		fin.close();
+	}
+	else cout << "File is not found";
+}
+void List::Sort()
+{
+	Cklad *temp = Head;
+	Cklad *temp2;
+	Cklad *tempShow;
+	char swap_Name_of_product[20];
+	int swap_kolichestvo;
+	int swap_stoimost;
+	int flag = 0;
+	while (flag == 0)
+	{
+		flag = 1;
+		while (temp->Next != NULL)
+		{
+			tempShow = Head;
+			temp2 = temp->Next;
+			if (strcmp(temp->Name_of_product, temp2->Name_of_product)>0)
+			{
+				strcpy_s(swap_Name_of_product, temp->Name_of_product);
+				strcpy_s(temp->Name_of_product, temp2->Name_of_product);
+				strcpy_s(temp2->Name_of_product, swap_Name_of_product);
+				swap_kolichestvo = temp->kolichestvo;
+				temp->kolichestvo = temp2->kolichestvo;
+				temp2->kolichestvo = swap_kolichestvo;
+				swap_stoimost = temp->stoimost;
+				temp->stoimost = temp2->stoimost;
+				temp2->stoimost = swap_stoimost;
+				flag = 0;
+			}
+			temp = temp->Next;
+		}
+		if (temp->Next == NULL)
+			temp = Head;
+	}
+	cout << "Sorting completed" << endl;
+};
+void List::Delete()
+{
+	if (Head != NULL)
+	{
+		Cklad *temp = Head->Next;
+		delete Head;
+		Head = temp;
+	}
+}
+void List::Search()
+{
+	Cklad *temp = Head;
+	system("cls");
+	char s1[20];
+	cout << "Input Name_of_product: " << endl;
+	cin >> s1; cout << setw(20) << "Name_of_product" << setw(30) << "kolichestvo" << setw(15) << "stoimost" << setw(20) << "prosent_nadbavka" << endl;
+	cout << "_______________________________________________________________________" << endl << endl;
+	while (temp != NULL)
+	{
+		if (strcmp(temp->Name_of_product, s1) == 0)
+		{
+			cout << setw(20) << temp->Name_of_product;
+			cout << setw(30) << temp->kolichestvo;
+			cout << setw(15) << temp->stoimost;
+			cout << setw(20) << temp->prosent_nadbavka << endl;
+		}
+		temp = temp->Next;
+	}
+	cout << "_______________________________________________________________" << endl << endl;
+	system("PAUSE");
+}
+void List::Add()
+{
+	Cklad st;
+	Cklad *temp = new Cklad;
+	temp->Next = Head;
+	system("cls");
+	cin.ignore();
+	cout << "Name_of_product"; cin.getline(st.Name_of_product, 20);
+	cout << "kolichestvo"; cin >> st.kolichestvo;
+	cout << "stoimost:"; cin >> st.stoimost;
+	cout << "prosent_nadbavka"; cin >> st.prosent_nadbavka;
+	cin.ignore();
+	temp->kolichestvo = st.kolichestvo;
+	temp->stoimost = st.stoimost;
+	temp->prosent_nadbavka = st.prosent_nadbavka;
+	Head = temp;
+}
+
+void List::LoadToFile()
+{
+	char file_name[30];
+	system("cis");
+	cout << "Input file name: ";
+	cin >> file_name;
+	ofstream fout(file_name);
+	if (fout) {
+		Cklad *temp = Head;
+		while (temp != NULL)
+		{
+			fout << setw(20) << temp->Name_of_product << setw(20) << temp->kolichestvo << setw(10) << temp->stoimost << setw(10) << temp->prosent_nadbavka << endl;
+			temp = temp->Next;
+		}
+		cout << "File is completed" << endl;
+		system("pause");
+		fout.close();
+	}
+	else cout << "File is not create";
+}
+void List::Show() {
+	Cklad *temp = Head;
+	system("cls");
+	cout << setw(20) << "Name_of_product" << setw(20) << "kolichestvo" <<
+		setw(10) << "stoimost" << setw(10) << "prosent_nadbavka" << endl;
+	cout << "	" << endl << endl;
+	while (temp != NULL)
+	{
+		cout << setw(20) << temp->Name_of_product << setw(20) << temp->kolichestvo <<
+			setw(10) << temp->stoimost << setw(10) << temp->prosent_nadbavka << endl;
+		temp = temp->Next;
+	}
+}
+
+int main()
+{
+	cout.setf(ios::left);
+	bool flag = true;
+	int choise;
+	//Cklad cklad;
+	List spisok;
+	while (flag)
+	{
+		system("cls");
+		cout << "     MENU" << endl;
+		cout << "____________________________________" << endl;
+		cout << "1: Read from the file" << endl;
+		cout << "2: Show list" << endl;
+		cout << "3: Add cklad" << endl;
+		cout << "4: Save to the file" << endl;
+		cout << "5: Delete the record" << endl;
+		cout << "6: Search" << endl;
+		cout << "7: Sort" << endl;
+		cout << "8: Exit" << endl;
+		cout << "_____________________________________" << endl << endl;
+		cout << "Make your choise (1-8): ";
+		cin >> choise;
+		switch (choise)
+		{
+		case 1: spisok.ReadFromFile();
+			system("PAUSE"); break;
+		case 2: spisok.Show();
+			system("PAUSE"); break;
+		case 3: spisok.Add(); break;
+		case 4: spisok.LoadToFile(); break;
+		case 5: spisok.Delete(); break;
+		case 6: spisok.Search(); break;
+		case 7: spisok.Sort(); break;
+		case 8: flag = false; break;
+		default:cout << "You are wrong.  ";
+		}
+	};
+	system("PAUSE");
+	return 0;
+}

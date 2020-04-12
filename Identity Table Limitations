@@ -1,0 +1,485 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+namespace vLaba
+{
+    public partial class Laba : Form
+    {
+        public Laba()
+        {
+            InitializeComponent();
+        }
+
+        public void Laba_Load(object sender, EventArgs e)
+        {
+            //textBox4.Text = "Количество идентификаторов";//подсказка
+            //textBox4.ForeColor = Color.Gray;
+            var column1 = new DataGridViewTextBoxColumn();
+            this.IDtext.Columns.AddRange(new DataGridViewColumn[] { column1 });
+            dataGridView1.Columns.Add("Column1", "ХФ");
+            dataGridView1.Columns.Add("Column2", "Адрес");
+            dataGridView2.Columns.Add("Column1", "Указатель");
+            dataGridView2.Columns.Add("Column2", "Идентификатор");
+            dataGridView2.Columns.Add("Column3", "Левая ссылка");
+            dataGridView2.Columns.Add("Column4", "Правая ссылка");
+            for (int i=0; i<180; i++)
+            {
+                dataGridView1.Rows.Add();
+                dataGridView1.Rows[i].Cells[0].Value = i+65;
+                dataGridView1.Rows[i].Cells[1].Value =null;
+            }
+        }
+
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void LoadFile_Click(object sender, EventArgs e)//загрузить из файла
+        {
+            int flag = 0;
+            foreach (var line in File.ReadLines("laba.txt"))
+            {
+                var array = line.Split();
+                string buf = String.Join(" ", array);
+                int strLen = buf.Length;
+
+                //int flag = 0;
+
+                if (strLen > 32 || strLen == 0)
+                {
+                    MessageBox.Show("Идентификатор не должен быть пустым либо превышать 32 символа");
+                    flag = 1;
+                }
+                else
+                {
+                    //int flag = 0;
+                    var addOne = buf;
+                    if (IDtext.RowCount > 0)//проверка на повторение ид
+                    {
+                        for (int k = 0; k < IDtext.RowCount; k++)
+                        {
+                            if ((string)IDtext.Rows[k].Cells[0].Value == buf)
+                            {
+                                MessageBox.Show("Идентификатор повторяется. Измените идентификатор в файле, либо сгенирируйте заново");
+                                flag = 1;
+                            }
+                        }
+                    }
+                    //else { IDtext.Rows.Add(addOne); }
+                    //IDtext.Rows.Add(addOne); IDtext.Rows[0].Cells[0].Value != null
+                }
+
+                //IDtext.Rows.Add(array);
+            }
+            if (flag == 0)//вывод в idtext таблицу
+            {
+                foreach (var line in File.ReadLines("laba.txt"))
+                {
+                    var array = line.Split();
+                    IDtext.Rows.Add(array);
+                }
+            }
+
+
+
+
+
+            /*
+             * 
+             * 
+             * 
+             * 
+            if(strLen>32 || strLen == 0)
+            {
+                MessageBox.Show("Идентификатор не должен быть пустым либо превышать 32 символа");
+            } else
+            {
+                int flag = 0;
+                var addOne = buf;
+                if (IDtext.RowCount > 0)
+                {
+                    for(int k=0;k<IDtext.RowCount; k++)
+                    {
+                        if ((string)IDtext.Rows[k].Cells[0].Value == buf)
+                        {
+                            MessageBox.Show("Идентификатор повторяется. Введите другой");
+                            flag = 1;
+                        }
+                    }
+                    if (flag==0) {IDtext.Rows.Add(addOne);}
+                } else {IDtext.Rows.Add(addOne);}
+                //IDtext.Rows.Add(addOne); IDtext.Rows[0].Cells[0].Value != null
+            }
+
+
+             Stream fs = new FileStream("laba.txt", FileMode.Open, FileAccess.Read);
+            StreamReader sr = new StreamReader(fs);
+            DataTable dt = new DataTable();
+            int count = 1;
+
+            while (sr.Peek() != -1)
+            {
+                string s = sr.ReadLine();
+                dt.Rows.Add(count, s);
+                count++;
+            }
+            IDtext.DataSource = dt;*/
+
+
+
+
+        }
+
+        /*private void SaveFile_Click(object sender, EventArgs e)
+        {
+            //string fileName = "laba.txt";
+            //FileStream aFile = new FileStream("laba.txt", FileMode.OpenOrCreate);
+            StreamWriter sw = new StreamWriter("laba.txt", false);
+            //aFile.Seek(0, SeekOrigin.End);
+            int i = 0;
+            if (textBox4.Text != null)
+                i = Convert.ToInt32(textBox4.Text);
+
+
+
+            if (i<1)
+            {
+                MessageBox.Show("Введите количество от 1");
+            } else
+            {
+                Random rand = new Random(DateTime.Now.Millisecond);
+                char[] a = new char[32];
+                int n;
+                int casino;
+                string temp = new string(a);
+
+                for (int j=0; j<i; j++)
+                {
+                    n = rand.Next(1, 32);
+                    for(int k=0; k<n; k++)
+                    {
+                        casino = rand.Next(1,3);
+                        if (casino == 2) { a[k] = (char)rand.Next(0x0041,0x005A); }
+                        else {a[k] = (char)rand.Next(0x0061, 0x007A); }
+                    }
+                    temp = new string(a);
+                    sw.WriteLine(temp);
+                }   
+            }
+            sw.Close();
+        }*/
+
+
+        private void textBox1_Click(object sender, EventArgs e)
+        {
+            textBox1.Clear();
+        }
+
+        private void IDtext_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void textBox4_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+       
+
+        private void textBox4_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            char number = e.KeyChar;
+
+            if (!Char.IsDigit(number) && number != 8)//ограничение на ввод
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void textBox6_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox6_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            char number = e.KeyChar;
+
+            if ((e.KeyChar <= 64 || e.KeyChar >= 91) && (e.KeyChar <= 96 || e.KeyChar >= 123) && (number != 8))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void AddID_Click(object sender, EventArgs e)
+        {
+            string buf = textBox6.Text;
+            int strLen = buf.Length;
+            int flag;
+            if (strLen>32 || strLen == 0)
+            {
+                MessageBox.Show("Идентификатор не должен быть пустым либо превышать 32 символа");
+            } else
+            {
+                flag = 0;
+                var addOne = buf;
+                if (IDtext.RowCount > 0)
+                {
+                    for(int k=0;k<IDtext.RowCount; k++)
+                    {
+                        if ((string)IDtext.Rows[k].Cells[0].Value == buf)
+                        {
+                            MessageBox.Show("Идентификатор повторяется. Введите другой");
+                            flag = 1;
+                        }
+                    }
+                    if (flag==0) {
+                        dataGridView2.Rows.Add();
+                        dataGridView2.Rows[dataGridView2.RowCount-2].Cells[0].Value = dataGridView2.RowCount-2;
+                        dataGridView2.Rows[dataGridView2.RowCount-2].Cells[1].Value = addOne;
+                        IDtext.Rows.Add(addOne);
+                        for (int i = 0; i < dataGridView2.RowCount; i++)
+                        {
+                            dataGridView2.Rows[i].Cells[2].Value = null;
+                            dataGridView2.Rows[i].Cells[3].Value = null;
+                        }
+                        for (int i = 0; i < 180; i++) {
+                            dataGridView1.Rows[i].Cells[1].Value = null;
+                        }
+                    }
+                } else {IDtext.Rows.Add(addOne);
+                    dataGridView2.Rows.Add();
+                    dataGridView2.Rows[dataGridView2.RowCount-2].Cells[0].Value = dataGridView2.RowCount-2;
+                    dataGridView2.Rows[dataGridView2.RowCount-2].Cells[1].Value = addOne;
+                    for (int i = 0; i < dataGridView2.RowCount; i++)
+                    {
+                        dataGridView2.Rows[i].Cells[2].Value = null;
+                        dataGridView2.Rows[i].Cells[3].Value = null;
+                    }
+                    for (int i = 0; i < 180; i++)
+                    {
+                        dataGridView1.Rows[i].Cells[1].Value = null;
+                    }
+                }
+                //IDtext.Rows.Add(addOne); IDtext.Rows[0].Cells[0].Value != null
+            }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            dataGridView2.Rows.Clear();
+            string buf = null;
+            //int Srav = 0;
+            int strLen;
+            int Coll=0;//число коллизий
+            int func;//функция
+            int flag = 0;
+            int temp = -1;
+            for(int i=0; i<dataGridView2.RowCount; i++)
+            {
+                dataGridView2.Rows[i].Cells[2].Value = null;
+                dataGridView2.Rows[i].Cells[3].Value = null;
+            }
+            for (int i = 0; i < IDtext.RowCount - 1; i++)
+            {
+                func = 0;
+                dataGridView2.Rows.Add();//добавить строку в ти
+                dataGridView2.Rows[i].Cells[0].Value = i;//добавление адреса
+                dataGridView2.Rows[i].Cells[1].Value = IDtext.Rows[i].Cells[0].Value;//добавление ид
+                buf = (string)IDtext.Rows[i].Cells[0].Value;//
+                strLen = buf.Length;//длина строки
+                
+                if (strLen<5)
+                {
+                    func = (int)buf[0];
+                }
+                else
+                {
+                    func = (int)buf[0] + (int)buf[4];
+                }
+                for (int j=0; j<180; j++)
+                {
+                    if (func == (int)dataGridView1.Rows[j].Cells[0].Value)
+                    {
+                        ///dataGridView1.Rows[j].Cells[1].Value = i;
+                        //break;
+                        if(dataGridView1.Rows[j].Cells[1].Value == null)
+                        {
+                            //Srav++;
+                            dataGridView1.Rows[j].Cells[1].Value = i;
+                            break;
+                        }else
+                        {
+                            temp = (int)dataGridView1.Rows[j].Cells[1].Value;
+                            flag = -1;
+                            Coll++;
+                            while (flag != 1)
+                            {
+                                if (String.Compare(buf, (string)dataGridView2.Rows[temp].Cells[1].Value) > 0)
+                                {
+                                    if (dataGridView2.Rows[temp].Cells[3].Value == null)
+                                    {
+                                        flag = 1;
+                                        dataGridView2.Rows[temp].Cells[3].Value = i;
+                                    }
+                                    else
+                                    {
+                                        temp = (int)dataGridView2.Rows[temp].Cells[3].Value;
+                                    }
+                                }else
+                                {
+                                    if (dataGridView2.Rows[temp].Cells[2].Value == null)
+                                    {
+                                        flag = 1;
+                                        dataGridView2.Rows[temp].Cells[2].Value = i;
+
+                                    }else
+                                    {
+                                        temp = (int)dataGridView2.Rows[temp].Cells[2].Value;
+                                    }
+                                }
+                            }
+                            //if (dataGridView2.Rows[i].Cells[1].Value > dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[1].Value)
+                           /* if (String.Compare((string)dataGridView2.Rows[i].Cells[1].Value, (string)dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[1].Value)>0)
+                            {
+                                temp=dataGridView
+                                while (flag != 1)
+                                {
+
+                                }*/
+                                //dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[3].Value = i;
+                                /*if (dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[3].Value == null)
+                                {
+                                    dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[3].Value = i;
+                                }else
+                                {
+                                    if(String.Compare((string)dataGridView2.Rows[(int)dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[3].Value].Cells[1].Value,(string)dataGridView2.Rows[i].Cells[1].Value) > 0)
+                                    {
+                                        dataGridView2.Rows[(int)dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[3].Value].Cells[2].Value = i;
+                                    }else
+                                    {
+                                        dataGridView2.Rows[(int)dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[3].Value].Cells[3].Value = i;
+                                    }
+                                    //dataGridView2.Rows[(int)].Cells[].Value = i;
+                                    //dataGridView2.Rows[(int)dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[3].Value].Cells[3].Value
+                                }
+
+                            }
+                            else
+                            {
+                                //dataGridView2.Rows[(int)dataGridView1.Rows[j].Cells[1].Value].Cells[2].Value = i;
+                            }*/
+                        }
+                    }
+                }
+                //(int)buf[]
+                textBox12.Text = Convert.ToString(Coll);
+                //textBox13.Text = Convert.ToString(Srav);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox8_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+        private void textBox8_Enter(object sender, EventArgs e)
+        {
+            textBox8.Text = string.Empty;
+            textBox8.ForeColor = Color.Black;
+        }
+        private void textBox8_Click(object sender, EventArgs e)
+        {
+            textBox8.Text = string.Empty;
+            textBox8.ForeColor = Color.Black;
+        }
+
+        private void textBox8_Leave(object sender, EventArgs e)
+        {
+            if (textBox8.Text == null)
+            {
+                textBox8.Text = "Введите идентификатор";//подсказка
+                textBox8.ForeColor = Color.Gray;
+            }
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            textBox13.Text = null;
+            int flag=0;
+            int Srav = 0;
+            string buf = textBox8.Text;
+            if (dataGridView2.RowCount > 0)
+            {
+                for (int k = 0; k < dataGridView2.RowCount; k++)
+                {
+                    Srav++;
+                    if ((string)dataGridView2.Rows[k].Cells[1].Value == buf)
+                    {
+                        //MessageBox.Show("Идентификатор"/*(int)dataGridView2.Rows[k].Cells[0].Value*/);
+                        MessageBox.Show("Идентификатор " + buf + " находится по адресу " + dataGridView2.Rows[k].Cells[0].Value);
+                        flag = 1;
+                    }
+                }
+                if (flag == 0) { MessageBox.Show("Идентификатор не найден"); }
+                Srav--;
+                textBox13.Text = Convert.ToString(Srav);
+            }
+            else { MessageBox.Show("Таблица пуста"); }
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox7_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

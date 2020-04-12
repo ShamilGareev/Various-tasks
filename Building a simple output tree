@@ -1,0 +1,200 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.IO;
+
+namespace WFA_v3._1_var16
+{
+    public partial class Form1 : Form
+    {
+
+        public BinaryTree[] hashTable;
+        public Dictionary<string, int> indexOfMatrix = new Dictionary<string, int>(11);
+        public char[,] predateMatrix; // матрица предшествований
+        private int hashSize = (122 + 122) - (97 + 97);
+        public int column = 4;
+        private DataGridViewTextBoxColumn[] LexTable;
+        public List<IDElement> list = new List<IDElement>(); // список идентификаторов
+        public List<string> lexlist = new List<string>(); // список лексемм
+        public List<string> rules = new List<string>(); // список оставных правил
+        public List<string> temp = new List<string>();
+        public List<int> SequenceOfRules = new List<int>();
+        int numbOfKeyWord = 1, numbOfOperation = 1;
+        public int id = 0;
+        bool flag = false;
+        public Stack<string> stek = new Stack<string>();
+        enum States
+        {
+            STATE_A = 0,
+            STATE_B,
+            STATE_C,
+            STATE_D,
+            STATE_E,
+            STATE_F,
+            STATE_G,
+            STATE_H,
+            STATE_I,
+            STATE_J,
+            STATE_K,
+            STATE_L,
+            STATE_M,
+            STATE_N,
+            STATE_O,
+            STATE_P,
+            STATE_Q,
+            STATE_S,
+            STATE_Z
+        }
+
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            string str;
+            StreamReader sr = new StreamReader(@"C:\Source(v16).txt"); // Путь к текстовому файлу (путь не должен содержать русские символы) 
+            str = sr.ReadToEnd() + "\n";
+            richTextBox1.Text = str;
+            LexTable = new DataGridViewTextBoxColumn[column - 1];
+            Stack<TreeNode> Visite = new Stack<TreeNode>();
+
+            indexOfMatrix.Add("for", 0);
+            indexOfMatrix.Add("do", 1);
+            indexOfMatrix.Add("a", 2);
+            indexOfMatrix.Add("(", 3);
+            indexOfMatrix.Add(")", 4);
+            indexOfMatrix.Add(":=", 5);
+            indexOfMatrix.Add(";", 6);
+            indexOfMatrix.Add("<", 7);
+            indexOfMatrix.Add(">", 8);
+            indexOfMatrix.Add("=", 9);
+            indexOfMatrix.Add("1", 10);
+            indexOfMatrix.Add("0", 10);
+
+            for (int i = 0; i < column - 1; i++)
+            {
+                LexTable[i] = new DataGridViewTextBoxColumn();
+            }
+
+            LexTable[0].HeaderText = "Лексема";
+            LexTable[1].HeaderText = "Тип лексемы";
+            LexTable[2].HeaderText = "Значение";
+            this.dataGridView2.Columns.AddRange(LexTable);
+
+            hashTable = new BinaryTree[hashSize];
+
+            for (int i = 0; i < hashSize; i++)
+            {
+                hashTable[i] = new BinaryTree();
+                hashTable[i].SetForm1(this);
+            }
+
+            string s = "";
+            for (int i = 0; i < str.Length; i++)
+            {
+                s += str[i];
+                s = s.Replace("\r", "");
+                if (str[i] == ' ' || str[i] == '\n' || str[i] == '\t')
+                {
+                    LexAnalization(s, i);
+                    if (flag)
+                        return;
+                    s = "";
+                    s = "";
+                }
+            }
+            if (flag)
+                return;
+
+            predateMatrix = new char[11, 11];
+            predateMatrix[0, 0] = ' ';
+            predateMatrix[0, 1] = '=';
+            predateMatrix[0, 2] = ' ';
+            predateMatrix[0, 3] = '<';
+            predateMatrix[0, 4] = ' ';
+            predateMatrix[0, 5] = ' ';
+            predateMatrix[0, 6] = ' ';
+            predateMatrix[0, 7] = ' ';
+            predateMatrix[0, 8] = ' ';
+            predateMatrix[0, 9] = ' ';
+            predateMatrix[0, 10] = ' ';
+            predateMatrix[1, 9] = ' ';
+            predateMatrix[1, 10] = ' ';
+
+            while (temp.Count != 0)
+            {
+                int c = 0;
+                temp.RemoveAt(c);
+            }
+            string OutPutSeq = "F";
+
+            int a = lexlist.Count;
+            for (int i = 0; i < a; i++)
+            {
+                if ((stek.Peek() == "0" && lexlist[i] == "1") || (stek.Count == 2 && stek.Peek() == "F" && lexlist[i] == "1"))
+                    break;
+                for (int j = 0; j < stek.Count; j++)
+                {
+                    if (stek.Peek() != "for" && stek.Peek() != "do" && stek.Peek() != "a" && stek.Peek() != "(" && stek.Peek() != ")" && stek.Peek() != ":=" && stek.Peek() != ";" && stek.Peek() != "<" && stek.Peek() != ">" && stek.Peek() != "=" && stek.Peek() != "0")
+
+                temp2 = temp1;
+                if (str.CompareTo(temp1.GetKey()) > 0)
+                {
+                    temp1 = temp1.GetRight();
+                }
+                else
+                    if (str.CompareTo(temp1.GetKey()) < 0)
+                    {
+                        temp1 = temp1.GetLeft();
+                    }
+            }
+
+            if (temp2 == null)
+            {
+                this.Root = temp;
+            }
+            else
+                if (str.CompareTo(temp2.GetKey()) > 0)
+                {
+                    temp2.SetRight(temp);
+                }
+                else
+                    if (str.CompareTo(temp2.GetKey()) < 0)
+                    {
+                        temp2.SetLeft(temp);
+                    }
+        }
+
+        public IDElement Search(string str)
+        {
+            IDElement temp = this.Root;
+
+            while (temp != null)
+            {
+                if (str.CompareTo(temp.GetKey()) == 0)
+                {
+                    return temp;
+                }
+                else
+                    if (str.CompareTo(temp.GetKey()) > 0)
+                    {
+                        temp = temp.GetRight();
+                    }
+                    else
+                        if (str.CompareTo(temp.GetKey()) < 0)
+                        {
+                            temp = temp.GetLeft();
+                        }
+            }
+            return null;
+        }
+    }
+}

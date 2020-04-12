@@ -1,0 +1,361 @@
+#include <stdafx.h>
+#include <iostream>
+#include <fstream>
+#include <string.h>
+#include <stdlib.h>
+#include <iomanip>
+#include<iomanip>
+#include<stack>
+using namespace std;
+
+struct Cklad
+{
+	char Name_of_product[20];
+	int kolichestvo;
+	int stoimost;
+	int prosent_nadbavka;
+	Cklad*Next;
+};
+
+struct product
+{
+	char Name_of_product[20];
+	int kolichestvo;
+	int sum;
+	product *Next = NULL;
+};
+
+class Stack
+{
+	Cklad*Head;
+	stack <Cklad> B;
+	stack <product> P;
+public:
+	Stack() :Head(NULL) {};
+	void ReadFromFile();
+	void Add();
+	void Show();
+	void LoadToFile();
+	void Delete();
+	void Search();
+	void Sort();
+	void SortEx();
+	void CreatedPokup();
+	void ShowEx();
+	void ShowTask();
+};
+
+void Stack::Add()
+{
+	Cklad buy;
+	system("cls");
+
+	cin.ignore();
+	cout << "Name_of_product:"; cin.getline(buy.Name_of_product, 20);
+	cout << "kolichestvo:"; cin >> buy.kolichestvo;
+	cout << "stoimost:"; cin >> buy.stoimost;
+	cin.ignore();
+	cout << "prosent_nadbavka:"; cin >> buy.prosent_nadbavka;
+	B.push(buy);
+}
+
+void Stack::ReadFromFile()
+{
+	char file_name[20];
+	cin.ignore();
+	cout << "Enter file name: ";
+	cin.getline(file_name, 20);
+	ifstream fin("file_name.txt");
+	if (fin.is_open())
+	{
+		cout << "File is open" << endl;
+		Cklad*temp;
+		while (!fin.eof())
+		{
+			temp = new Cklad;
+			fin >> temp->Name_of_product >> temp->kolichestvo >> temp->stoimost >> temp->prosent_nadbavka;
+			B.push(*temp);
+		}
+		fin.close();
+		cout << "Data is received" << endl;
+	}
+	else
+		cout << "File is not found" << endl;
+}
+
+void Stack::LoadToFile()
+{
+	char file_name[20];
+	cin.ignore();
+	cout << "Enter file name: ";
+	cin.getline(file_name, 20);
+	ofstream fout(file_name);
+	if (fout)
+	{
+		stack <Cklad> temp;
+		temp = B;
+
+		while (!temp.empty())
+		{
+			fout << setw(20) << temp.top().Name_of_product;
+			fout << setw(20) << temp.top().kolichestvo;
+			fout << setw(10) << temp.top().stoimost;
+			fout << setw(20) << temp.top().prosent_nadbavka;
+			temp.pop();
+		}
+		cout << "File is completed" << endl;
+	}
+	else
+		cout << "File is not create" << endl;
+}
+
+void Stack::Show()
+{
+	stack <Cklad> temp = B;
+	system("cls");
+	cout << setw(20) << "Name_of_product" << setw(20) << "kolichestvo" << setw(15) << "stoimost" << setw(20) << "prosent_nadbavka"  << endl;
+	cout << "__________________________________" << endl << endl;
+	while (!temp.empty())
+	{
+		cout << setw(20) << temp.top().Name_of_product;
+		cout << setw(20) << temp.top().kolichestvo;
+		cout << setw(15) << temp.top().stoimost;
+		cout << setw(20) << temp.top().prosent_nadbavka;
+		temp.pop();
+	}
+	cout << "___________________________________" << endl << endl;
+}
+
+void Stack::Delete()
+{
+	char name[20];
+	cin.ignore();
+	cout << "Enter Name of Cklad to delete: ";
+	cin.getline(name, 20);
+	stack <Cklad> temp = B;
+	stack <Cklad> temp1;
+	while (!temp.empty())
+	{
+		if (strcmp(temp.top().Name_of_product, name) != 0)
+		{
+			temp1.push(temp.top());
+		}
+
+		temp.pop();
+	}
+
+	B = temp1;
+}
+
+void Stack::Search()
+{
+	char name[20];
+	bool flag = 0;
+	system("cls");
+	cin.ignore();
+	cout << "Enter Name of catry: ";
+	cin.getline(name, 20);
+	stack <Cklad>temp = B;
+
+	while (!temp.empty())
+	{
+		if (strcmp(temp.top().Name_of_product, name) == 0)
+		{
+			cout << setw(20) << temp.top().Name_of_product;
+			cout << setw(20) << temp.top().kolichestvo;
+			cout << setw(10) << temp.top().stoimost;
+			cout << setw(20) << temp.top().prosent_nadbavka;
+			flag = 1;
+		}
+		temp.pop();
+	}
+	if (flag == 0)
+		cout << "Not found" << endl;
+}
+
+void Stack::Sort()
+{
+	stack<Cklad> temp1;
+	stack<Cklad> temp2;
+	stack<Cklad> temp3;
+	stack<Cklad> temp4;
+	temp1 = B;
+
+	while (temp2.size() != B.size())
+	{
+		temp3.push(temp1.top());
+		temp1.pop();
+		while (!temp1.empty())
+		{
+			if (temp1.top().stoimost < temp3.top().stoimost)
+			{
+				temp4.push(temp3.top());
+				temp3.pop();
+				temp3.push(temp1.top());
+			}
+			else
+			{
+				temp4.push(temp1.top());
+			}
+			temp1.pop();
+		}
+
+		temp2.push(temp3.top());
+		temp3.pop();
+		temp1 = temp4;
+		while (!temp4.empty())
+			temp4.pop();
+
+	}
+
+	B = temp2;
+}
+
+void Stack::CreatedPokup()
+{
+	stack<Cklad>temp = B;
+	stack<product>temp1 = P;
+	stack<product>temp2;
+	while (!temp.empty())
+	{
+		bool flag = 1;
+
+		while (!temp1.empty())
+		{
+			if (strcmp(temp1.top().Name_of_product, temp.top().Name_of_product) == 0 && strcmp(temp1.top().Name_of_product, temp.top().Name_of_product) == 0)
+			{
+				flag = 0;
+				break;
+			}
+			temp1.pop();
+		}
+
+		if (flag == 1)
+		{
+			product pok;
+			strcpy_s(pok.Name_of_product, temp.top().Name_of_product);
+			strcpy_s(pok.Name_of_product, temp.top().Name_of_product);
+			pok.sum = 0;
+			P.push(pok);
+		}
+		temp.pop();
+		temp1 = P;
+	}
+
+	temp = B;
+	temp1 = P;
+	while (!temp.empty())
+	{
+		while (!temp1.empty())
+		{
+			if (strcmp(temp1.top().Name_of_product, temp.top().Name_of_product) == 0 && strcmp(temp1.top().Name_of_product, temp.top().Name_of_product) == 0)
+			{
+				temp1.top().sum += temp.top().prosent_nadbavka;
+			}
+			temp2.push(temp1.top());
+			temp1.pop();
+		}
+		temp1 = temp2;
+		while (!temp2.empty())
+			temp2.pop();
+		temp.pop();
+	}
+	P = temp1;
+}
+
+void Stack::SortEx()
+{
+	stack<product> temp1;
+	stack<product> temp2;
+	stack<product> temp3;
+	stack<product> temp4;
+	temp1 = P;
+
+	while (temp2.size() != P.size())
+	{
+		temp3.push(temp1.top());
+		temp1.pop();
+		while (!temp1.empty())
+		{
+			if (temp1.top().sum < temp3.top().sum)
+			{
+				temp4.push(temp3.top());
+				temp3.pop();
+				temp3.push(temp1.top());
+			}
+			else
+			{
+				temp4.push(temp1.top());
+			}
+			temp1.pop();
+		}
+
+		temp2.push(temp3.top());
+		temp3.pop();
+		temp1 = temp4;
+		while (!temp4.empty())
+			temp4.pop();
+
+	}
+
+	P = temp2;
+}
+
+void Stack::ShowEx()
+{
+	CreatedPokup();
+	stack<product>temp = P;
+	system("cls");
+	SortEx();
+	cout << setw(20) << "Name_of_product" << setw(20) << "kolichestvo" << setw(10) << "stoimost" << endl;
+	cout << "___________________________________" << endl << endl;
+	while (!temp.empty())
+	{
+		cout << setw(20) << temp.top().Name_of_product;
+		cout << setw(20) << temp.top().kolichestvo;
+		cout << setw(10) << temp.top().sum << endl;
+		temp.pop();
+	}
+	cout << "___________________________________" << endl << endl;
+}
+
+int main()
+{
+	cout.setf(ios::left);
+	bool flag = true;
+	int choice;
+	Cklad product;
+	Stack st;
+	while (flag)
+	{
+		system("cls");
+		cout << " MENU" << endl;
+		cout << "_______________________" << endl;
+		cout << "1:Read from the file" << endl;
+		cout << "2:Show list" << endl;
+		cout << "3:Add Cklad" << endl;
+		cout << "4:Save to the file" << endl;
+		cout << "5:Delete the record" << endl;
+		cout << "6: Search" << endl;
+		cout << "7: Sort" << endl;
+		cout << "8: Task" << endl;
+		cout << "9: Exit" << endl;
+		cout << "________________________" << endl << endl;
+		cout << "Make your choice (1-8):";
+		cin >> choice;
+		switch (choice)
+		{
+		case 1:st.ReadFromFile(); system("PAUSE"); break;
+		case 2: st.Show(); system("PAUSE"); break;
+		case 3:st.Add(); break;
+		case 4: st.LoadToFile(); break;
+		case 5: st.Delete(); break;
+		case 6: st.Search(); system("pause"); break;
+		case 7: st.Sort(); break;
+		case 8: st.ShowEx(); system("pause"); break;
+		case 9:flag = false; break;
+		default:cout << "You are wrong.";
+		}
+	}
+	return 0;
+}
